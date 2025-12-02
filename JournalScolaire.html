@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Écho de Notre École - Journal 2AC</title>
+    <!-- Chargement des polices "Journal" -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@300;400;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+    <!-- Icones Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* 1. CONFIGURATION DE BASE ET THEME PAPIER */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #2c3e50; /* Fond sombre pour faire ressortir le "papier" */
+            margin: 0;
+            padding: 20px 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            place-items: center;
+            font-family: 'Lato', sans-serif;
+            color: #2c3e50;
+        }
+
+        /* ------------------------------------------------------------------ */
+        /* BASE DE L'AFFICHAGE DES SLIDES (Vue DESKTOP par defaut) */
+        /* ------------------------------------------------------------------ */
+        .slide-container {
+            width: 1280px; /* Largeur fixe pour la vue Desktop */
+            height: 720px; /* Hauteur fixe pour la vue Desktop */
+            background-color: #fdfbf7; /* Couleur papier creme */
+            /* Texture de fond legere pour simuler le papier */
+            background-image: url("data:image:svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23dcd9d1' fill-opacity='0.1'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 50px 70px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border-radius: 4px;
+            transition: width 0.5s ease-in-out, height 0.5s ease-in-out, padding 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .slide-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom right, rgba(255,255,255,0) 0%, rgba(0,0,0,0.05) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* FILTRES D'IMAGE PAR DEFAUT (PC - effet sepia) */
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: sepia(0.5) contrast(1.1);
+            transition: filter 0.5s ease; 
+        }
+
+        /* Animation au survol des images: le filtre est desactive pour la couleur reelle */
+        .image-container:hover img {
+            filter: none !important; 
+        }
+        
+        /* ------------------------------------------------------------------ */
+        /* MODE MOBILE FORCE (.forced-mobile class) */
+        /* ------------------------------------------------------------------ */
+        body.forced-mobile .slide-container {
+            width: 380px; 
+            height: auto; /* Permet un defilement naturel sur mobile */
+            min-height: 600px;
+            max-width: 95vw;
+            padding: 20px;
+            transform: translateY(0); 
+            margin: 20px auto;
+        }
+        
+        /* Appliquer le filtre Mobile : Moins de gris, plus net */
+        body.forced-mobile .image-container img {
+             filter: grayscale(0.5) contrast(1.1) brightness(1.1); /* Ajustement pour un meilleur rendu mobile */
+        }
+        
+        body.forced-mobile h1 {
+            font-size: 40px;
+            padding-bottom: 10px;
+        }
+        
+        body.forced-mobile h2.article-title {
+            font-size: 28px;
+        }
+
+        body.forced-mobile .two-columns {
+            grid-template-columns: 1fr; /* Empiler les colonnes */
+            gap: 20px;
+        }
+        
+        /* ASSURANCE MOBILE : l'image doit TOUJOURS etre au-dessus (order: 1) du texte (order: 2) lors de l'empilement */
+        .image-wrapper { 
+             order: 1 !important;
+        }
+        .text-column {
+            order: 2 !important;
+            padding-right: 0;
+        }
+
+        
+        /* Contrainte de hauteur pour les images sur Mobile pour eviter qu'elles soient trop grandes */
+        body.forced-mobile .image-container {
+            height: 250px;
+            max-height: 40vh; /* Limite supplementaire */
+            transform: rotate(0deg) !important; /* Enlever toutes les rotations pour le mobile */
+            margin: 10px 0;
+            /* Reinitialiser les rotations appliquees aux elements sur la page */
+        }
+
+        body.forced-mobile .tiles-grid {
+            grid-template-columns: 1fr; /* Empiler les tuiles */
+            gap: 15px;
+        }
+
+        body.forced-mobile p, body.forced-mobile ul.eco-list li {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        body.forced-mobile .handwritten {
+            display: none; /* Cacher la note manuscrite sur le petit ecran */
+        }
+        
+        /* Styles Tetris Mobile */
+        body.forced-mobile #tetris-container {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            border-radius: 4px;
+        }
+        
+        body.forced-mobile #tetris-game-board {
+            width: 100%;
+            height: 90%;
+            margin-bottom: 0;
+        }
+
+        body.forced-mobile .tetris-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        
+        body.forced-mobile #tetris-next-piece {
+            display: none; /* Cacher la prochaine piece pour economiser de l'espace */
+        }
+
+        /* ------------------------------------------------------------------ */
+
+        /* 2. TYPOGRAPHIE "JOURNAL" */
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 80px;
+            text-align: center;
+            border-bottom: 3px double #2c3e50;
+            padding-bottom: 20px;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+            line-height: 1;
+            color: #1a252f;
+        }
+
+        .newspaper-header {
+            text-align: center;
+            border-bottom: 1px solid #2c3e50;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            font-style: italic;
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .section-tag {
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            display: inline-block;
+            padding: 4px 12px;
+            color: white;
+            border-radius: 2px;
+        }
+
+        .tag-green { background-color: #27ae60; }
+        .tag-blue { background-color: #3498db; } /* Couleur principale pour Sante/Cuisine */
+        .tag-purple { background-color: #8e44ad; }
+        .tag-orange { background-color: #f39c12; } /* Nouvelle couleur pour Jeux */
+        .tag-red { background-color: #c0392b; }
+        .tag-darkblue { background-color: #2c3e50; } /* Couleur pour Sport */
+
+        h2.article-title {
+            font-size: 42px;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        h3.sub-headline {
+            font-size: 24px;
+            color: #555;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        /* 3. ANIMATIONS D'ENTREE */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Animation pour le texte flottant */
+        @keyframes floatingText {
+            0% { transform: rotate(-10deg) translateY(0); }
+            100% { transform: rotate(-10deg) translateY(-8px); }
+        }
+
+        /* Appliquer les classes d'animation pour qu'elles se declenchent au chargement */
+        .animate-fade { animation: fadeIn 0.8s ease-out forwards; opacity: 0; }
+        .animate-slide { animation: slideInLeft 0.8s ease-out 0.2s forwards; opacity: 0; }
+        .animate-scale { animation: scaleIn 1s ease-out 0.4s forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+        .delay-5 { animation-delay: 1.0s; }
+
+
+        /* 4. LAYOUTS ET ANIMATIONS INTERACTIVES */
+
+        /* Layout Colonnes */
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            height: 100%;
+            align-items: flex-start; 
+            transition: grid-template-columns 0.5s ease-in-out;
+        }
+        
+        /* Classe specifique pour inverser l'ordre des colonnes */
+        .columns-inverted {
+            grid-template-areas: "col2 col1";
+        }
+        .columns-inverted .column-1 { grid-area: col1; }
+        .columns-inverted .column-2 { grid-area: col2; }
+
+
+        .text-column {
+            padding-right: 20px;
+            /* Ordre Mobile: 2 */
+        }
+        
+        .image-wrapper {
+            /* Ordre Mobile: 1 */
+        }
+
+        /* Image Styling avec ANIMATION HOVER */
+        .image-container {
+            width: 100%;
+            height: 450px;
+            position: relative;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+            border: 10px solid white;
+            transition: transform 0.8s ease-in-out, box-shadow 0.5s ease-in-out; 
+            overflow: hidden;
+        }
+
+        /* Animation au survol des images: tres douce et prolongee */
+        .image-container:hover {
+            transform: rotate(0deg) scale(1.05) !important;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            cursor: pointer;
+        }
+
+        .caption {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* Styles Listes */
+        ul.eco-list {
+            list-style: none;
+            padding: 0;
+        }
+        ul.eco-list li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            font-size: 19px;
+            transition: color 0.3s;
+        }
+        ul.eco-list li:hover {
+            color: #27ae60;
+            cursor: default;
+        }
+        ul.eco-list li i {
+            color: #27ae60;
+            margin-right: 15px;
+            margin-top: 5px;
+            font-size: 20px;
+        }
+        
+        /* Styles Cuisine */
+        .cuisine-article {
+            background-color: #f7e6f0;
+            padding: 20px;
+            border: 2px dashed #e8c4e4;
+            border-radius: 4px;
+        }
+        .cuisine-article h3 {
+            color: #8e44ad;
+            font-style: italic;
+        }
+
+        /* Style Tuiles avec ANIMATION HOVER/ACTIVE */
+        .tiles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        .tile {
+            background: white;
+            padding: 25px;
+            border: 1px solid #ddd;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: transform 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+            cursor: pointer;
+        }
+        .tile:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 18px 30px rgba(0,0,0,0.15);
+            border-color: #3498db;
+        }
+        .tile:active {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+        }
+        .tile i {
+            font-size: 40px;
+            color: #34495e;
+            margin-bottom: 20px;
+            transition: color 0.3s;
+        }
+        .tile:hover i {
+            color: #2c3e50; /* Couleur pour Sport */
+        }
+
+        /* Style Tetris (SLIDE 5) */
+        #tetris-game-area {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: flex-start;
+            background-color: #eee;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+            margin-top: 20px;
+        }
+
+        #tetris-game-board {
+            border: 5px solid #333;
+            background-color: #000;
+            display: grid;
+            grid-template-rows: repeat(20, 1fr);
+            grid-template-columns: repeat(10, 1fr);
+            width: 250px; 
+            height: 500px;
+            margin-bottom: 20px;
+        }
+
+        .tetris-cell {
+            width: 100%;
+            height: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tetris-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            font-family: monospace;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .tetris-info div {
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        #tetris-next-piece {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #333;
+            background-color: #000;
+            display: grid;
+            grid-template-rows: repeat(4, 1fr);
+            grid-template-columns: repeat(4, 1fr);
+            margin-top: 10px;
+        }
+
+        .tetris-button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .tetris-button {
+            padding: 10px 15px;
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.1s, transform 0.1s;
+        }
+
+        .tetris-button:hover {
+            background-color: #e67e22;
+        }
+
+        .tetris-button:active {
+            transform: scale(0.98);
+        }
+
+        .tetris-controls-tip {
+            font-size: 14px;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        /* Couleurs des tetrominos (avec ombre pour le contraste) */
+        .color-I { background-color: #00FFFF; box-shadow: inset 0 0 5px #00BFFF; }
+        .color-O { background-color: #FFFF00; box-shadow: inset 0 0 5px #FFD700; }
+        .color-T { background-color: #800080; box-shadow: inset 0 0 5px #BA55D3; }
+        .color-J { background-color: #0000FF; box-shadow: inset 0 0 5px #1E90FF; }
+        .color-L { background-color: #FFA500; box-shadow: inset 0 0 5px #FF8C00; }
+        .color-S { background-color: #00FF00; box-shadow: inset 0 0 5px #3CB371; }
+        .color-Z { background-color: #FF0000; box-shadow: inset 0 0 5px #CD5C5C; }
+        .color-empty { background-color: #000; }
+
+
+        /* ------------------------------------------------------------------ */
+        /* MODAL DE CHOIX DE VUE & BASCOULE (Style conserve) */
+        /* ------------------------------------------------------------------ */
+        #view-choice-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(44, 62, 80, 0.95); /* Fond sombre semi-transparent */
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        #view-choice-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal-content {
+            background-color: #fdfbf7;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            max-width: 90%;
+            width: 450px;
+            transform: scale(0.9);
+            transition: transform 0.5s ease;
+        }
+        
+        #view-choice-modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-content h2 {
+            font-size: 30px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .choice-buttons {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .choice-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #ecf0f1;
+            border: 3px solid #bdc3c7;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s, border-color 0.2s;
+            width: 150px;
+        }
+        
+        .choice-button:hover {
+            background-color: #dfe6e9;
+            border-color: #3498db;
+        }
+        
+        .choice-button:active {
+            transform: scale(0.95);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .choice-button i {
+            font-size: 50px;
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+        
+        .choice-button p {
+            font-weight: 700;
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        /* ------------------------------------------------------------------ */
+        /* BOUTONS DE BASCULE (Toggle) */
+        /* ------------------------------------------------------------------ */
+        .view-toggle-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 50; 
+            display: none; 
+            transition: opacity 0.3s;
+        }
+        
+        .toggle-button {
+            display: flex;
+            align-items: center;
+            padding: 8px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+        }
+        
+        .toggle-button i {
+            margin-right: 8px;
+        }
+        
+        .toggle-button:hover {
+            background-color: #2980b9;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        
+        .toggle-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Styles pour l'atelier IA */
+        .ia-section {
+            background-color: #f5f5f5;
+            padding: 30px;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+        .ia-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        .ia-input-group input, .ia-input-group button {
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .ia-input-group input {
+            flex-grow: 1;
+            border: 1px solid #bdc3c7;
+        }
+        
+        .ia-input-group button {
+            background-color: #8e44ad;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            font-weight: 700;
+            flex-shrink: 0; 
+        }
+        .ia-input-group button:hover {
+            background-color: #9b59b6;
+        }
+        .ia-input-group button:active {
+            transform: scale(0.96);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+        .ia-input-group button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: scale(1);
+            box-shadow: none;
+        }
+        
+        .ia-results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            min-height: 100px;
+        }
+        .ia-loading {
+            text-align: center;
+            font-style: italic;
+            color: #3498db;
+            padding: 20px;
+        }
+        
+        .quiz-results-container {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        .generated-quiz-box {
+            background-color: #f7e6f0;
+            border-left: 5px solid #8e44ad;
+            padding: 20px;
+            border-radius: 4px;
+        }
+        .generated-quiz-box .question {
+            color: #8e44ad;
+        }
+        .generated-quiz-box .answer {
+            margin-top: 10px;
+            padding: 8px;
+            background-color: #e8c4e4;
+            color: #6a006a;
+            font-weight: bold;
+            border-radius: 3px;
+        }
+
+    </style>
+</head>
+<body>
+    
+    <!-- MODAL DE CHOIX DE VUE -->
+    <div id="view-choice-modal">
+        <div class="modal-content">
+            <h2>Bienvenue dans L'Echo de Notre Ecole</h2>
+            <p>Pour une meilleure experience de lecture, veuillez choisir le format d'affichage adapte a votre appareil :</p>
+            
+            <div class="choice-buttons">
+                
+                <div class="choice-button" id="mobile-choice">
+                    <i class="fas fa-mobile-alt"></i>
+                    <p>Telephone / Tablette</p>
+                </div>
+                
+                <div class="choice-button" id="pc-choice">
+                    <i class="fas fa-desktop"></i>
+                    <p>PC / Grand Ecran</p>
+                </div>
+                
+            </div>
+            
+            <p style="font-size: 14px; color: #7f8c8d; margin-top: 30px;">(Votre choix sera memorise pour cette session.)</p>
+        </div>
+    </div>
+    
+    <!-- BOUTONS DE BASCULE (Mode PC <-> Mode Mobile) -->
+    <div class="view-toggle-container" id="view-toggle-container">
+        <button class="toggle-button" id="toggle-to-mobile" style="display: none;">
+            <i class="fas fa-mobile-alt"></i> Mode Mobile
+        </button>
+        <button class="toggle-button" id="toggle-to-pc" style="display: none;">
+            <i class="fas fa-desktop"></i> Mode PC
+        </button>
+    </div>
+    
+    <!-- SLIDE 1: COUVERTURE -->
+    <div class="slide-container" id="slide1">
+        <div class="content-wrapper">
+            <div class="newspaper-header animate-fade">
+                <span>N° 001</span>
+                <span>EDITION SPECIALE 2AC</span>
+                <span>NOVEMBRE 2025</span>
+            </div>
+            
+            <h1 class="animate-scale">L'ECHO DE NOTRE ECOLE</h1>
+            
+            <div class="handwritten">C'est notre projet</div>
+
+            <!-- Structure normale -->
+            <div class="two-columns" style="grid-template-columns: 1.5fr 1fr;">
+                <!-- Image de couverture (order: 1) -->
+                <div class="image-wrapper column-2 animate-scale delay-2" style="height: 350px;">
+                    <div class="image-container">
+                        <!-- NOUVELLE IMAGE DE COUVERTURE -->
+                        <img src="https://placehold.co/500x350/1e2b38/ffffff?text=COLLEGE+ENSEIGNEMENT+PRIVE" alt="Image pour la couverture : college de l'enseignement prive" onerror="this.onerror=null; this.src='https://placehold.co/500x350/1e2b38/ffffff?text=COLLEGE+ENSEIGNEMENT+PRIVE';">
+                        <div class="caption">La jeunesse marocaine, actrice de son avenir.</div>
+                    </div>
+                </div>
+                
+                <div class="text-column column-1 animate-slide delay-1">
+                    <h2 class="article-title" style="font-size: 36px;">Bienvenue dans notre premier numero !</h2>
+                    
+                    <!-- EDITO -->
+                    <p>
+                        <strong>EDITO :</strong> Chers lecteurs, nous sommes fiers de vous présenter notre journal interprété par l'équipe de journalistes de la 2AC du collège de l'enseignement privé. Ce projet est réalisé sous la supervision de notre professeure de français, **Madame Hayat el Ferrari**. Nous lui exprimons notre plus profonde gratitude pour son soutien. Nous sommes très heureux d'avoir publié notre première édition, et soyez **sûrs** qu'il y aura **beaucoup plus** dans le futur.
+                    </p>
+                    <p>
+                        Ce journal reflète la vie de notre établissement, nos activités, nos problèmes, et nos envies. Chaque article a été préparé avec enthousiasme. Nous vous souhaitons une bonne lecture.
+                    </p>
+                    <p style="font-style: italic; border-top: 1px solid #ccc; padding-top: 10px; margin-top: 20px;">
+                        L'équipe de rédaction de la 2AC.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: ENVIRONNEMENT -->
+    <div class="slide-container" id="slide2">
+        <div class="content-wrapper">
+            <!-- NOUVELLE RUBRIQUE -->
+            <div class="newspaper-header">RUBRIQUE : ENVIRONNEMENT</div>
+            
+            <div class="two-columns">
+                <!-- COLONNE IMAGE (order: 1) -->
+                <div class="image-wrapper animate-scale column-1">
+                    <div class="image-container">
+                        <img src="https://placehold.co/500x450/27ae60/ffffff?text=PLANTATION+SCOLAIRE" alt="Eleves plantant un arbre" onerror="this.onerror=null; this.src='https://placehold.co/500x450/27ae60/ffffff?text=PLANTATION+SCOLAIRE';">
+                        <div class="caption">Ensemble, cultivons un avenir plus vert.</div>
+                    </div>
+                </div>
+
+                <!-- COLONNE TEXTE (order: 2) -->
+                <div class="text-column animate-slide delay-1 column-2">
+                    <span class="section-tag tag-green">Dossier Vert</span>
+                    <h2 class="article-title">Zero Dechet : Devenons les Heros du College</h2>
+                    <p class="animate-fade delay-2">Saviez-vous que nous pouvons reduire nos dechets de moitie avec des gestes simples ? Voici le defi de la semaine :</p>
+                    
+                    <ul class="eco-list animate-fade delay-3">
+                        <li><i class="fa-solid fa-leaf"></i> <strong>Stop au Gaspillage :</strong> Utilisez le verso des feuilles comme brouillon.</li>
+                        <li><i class="fa-solid fa-bottle-water"></i> <strong>La Gourde Attitude :</strong> Remplacez les bouteilles plastiques par une gourde.</li>
+                        <li><i class="fa-solid fa-lightbulb"></i> <strong>Lumiere :</strong> Dernier sorti ? Eteins la lumiere de la classe.</li>
+                        <li><i class="fa-solid fa-apple-whole"></i> <strong>Gouter Zero Dechet :</strong> Privilegiez les fruits aux emballages plastiques.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: SANTÉ ET CUISINE -->
+    <div class="slide-container" id="slide3">
+        <div class="content-wrapper">
+            <!-- NOUVELLE RUBRIQUE -->
+            <div class="newspaper-header">RUBRIQUE : SANTÉ ET CUISINE</div>
+
+            <!-- Colonnes inversees (texte a droite en PC), mais l'ordre (image: 1 / texte: 2) est conserve en mobile -->
+            <div class="two-columns columns-inverted"> 
+                
+                <!-- COLONNE IMAGE (order: 1) -->
+                <div class="image-wrapper animate-scale delay-2 column-2">
+                    <div class="image-container" style="height: 500px;">
+                        <img src="https://placehold.co/500x500/3498db/ffffff?text=CUISINE+SANTE" alt="Plat equilibre" onerror="this.onerror=null; this.src='https://placehold.co/500x500/3498db/ffffff?text=CUISINE+SANTE';">
+                        <div class="caption">Manger bien, c'est etudier mieux !</div>
+                    </div>
+                </div>
+                
+                <!-- COLONNE TEXTE (order: 2) -->
+                <div class="text-column animate-slide column-1">
+                    <span class="section-tag tag-blue">Mieux Vivre</span>
+                    <h2 class="article-title">L'Equilibre Parfait : Etudes et Alimentation</h2>
+                    <p>Le cerveau, c'est comme un moteur : il a besoin du bon carburant. Ne sautez jamais le petit-dejeuner ! Il est la cle de votre concentration pour la journee.</p>
+                    
+                    <!-- NOUVELLE SECTION CUISINE -->
+                    <div class="cuisine-article">
+                        <h3 class="sub-headline">La Recette du 'Smoothie de l'Etudiant'</h3>
+                        <p style="font-size: 16px;">
+                            Un gouter parfait et rapide : mélangez une banane, quelques dattes (pour l'énergie), un verre de lait (ou boisson végétale) et une pincée de cannelle. C'est délicieux, sain, et prêt en 2 minutes !</p>
+                        <p style="font-size: 16px; font-weight: 700;">
+                            <i class="fa-solid fa-kitchen-set" style="color: #8e44ad;"></i> Astuce Pro : Ajoutez des flocons d'avoine pour tenir jusqu'au diner.
+                        </p>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <h3 class="sub-headline" style="color: #3498db; margin-bottom: 10px;">Le S.O.S. Anti-Stress :</h3>
+                        <p style="font-size: 16px;">Si le stress vous envahit, buvez de l'eau, faites une micro-pause et rappelez-vous que les examens ne définissent pas votre valeur.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: SPORT -->
+    <div class="slide-container" id="slide4">
+        <div class="content-wrapper">
+            <!-- NOUVELLE RUBRIQUE -->
+            <div class="newspaper-header">RUBRIQUE : SPORT</div>
+            
+            <!-- Structure normale -->
+            <div class="two-columns" style="grid-template-columns: 1fr 1.5fr;">
+                 <!-- COLONNE IMAGE (order: 1) -->
+                 <div class="image-wrapper animate-scale column-1">
+                    <div class="image-container" style="height: 400px;">
+                        <img src="https://placehold.co/500x400/2c3e50/ffffff?text=SPORT+COLLEGE" alt="Silhouette de sportifs" onerror="this.onerror=null; this.src='https://placehold.co/500x400/2c3e50/ffffff?text=SPORT+COLLEGE';">
+                        <div class="caption">Le sport : l'énergie pour les cours !</div>
+                    </div>
+                </div>
+
+                <!-- COLONNE TEXTE (order: 2) -->
+                <div class="text-column animate-slide delay-1 column-2">
+                    <span class="section-tag tag-darkblue">COMPETITION</span>
+                    <h2 class="article-title">Qui Sont Nos Champions de l'EPS ?</h2>
+                    
+                    <p>Le sport est essentiel pour le corps et l'esprit. Il nous apprend le respect des règles et le travail d'équipe. Cette année, le collège lance de nouvelles compétitions internes !</p>
+
+                    <div class="tiles-grid">
+                        <div class="tile animate-fade delay-2">
+                            <i class="fa-solid fa-futbol" style="color: #2c3e50;"></i>
+                            <h3 style="font-size: 18px; font-weight: bold;">Foot en Salle</h3>
+                            <p style="font-size: 14px;">Inscrivez votre équipe auprès du professeur M. Yassine !</p>
+                        </div>
+                        <div class="tile animate-fade delay-3">
+                            <i class="fa-solid fa-volleyball" style="color: #2c3e50;"></i>
+                            <h3 style="font-size: 18px; font-weight: bold;">Volley-Ball</h3>
+                            <p style="font-size: 14px;">Les matchs amicaux reprennent chaque mercredi après-midi.</p>
+                        </div>
+                        <div class="tile animate-fade delay-4">
+                            <i class="fa-solid fa-running" style="color: #2c3e50;"></i>
+                            <h3 style="font-size: 18px; font-weight: bold;">Course</h3>
+                            <p style="font-size: 14px;">La prochaine course est prévue pour le 15 décembre.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: JEUX (Tetris) -->
+    <div class="slide-container" id="slide5">
+        <div class="content-wrapper">
+            <!-- NOUVELLE RUBRIQUE -->
+            <div class="newspaper-header">RUBRIQUE : JEUX</div>
+
+            <div class="text-column">
+                <span class="section-tag tag-orange">CHALLENGE</span>
+                <h2 class="article-title">Tetris : Le Puzzle Qui Rend Accro !</h2>
+                <p>Plongez dans le monde classique de Tetris. L'objectif est simple : aligner les blocs pour faire disparaître les lignes. Utilisez les flèches du clavier pour jouer (Gauche/Droite pour se déplacer, Haut pour tourner, Bas pour accélérer la chute).</p>
+            </div>
+            
+            <!-- Zone de Jeu Tetris -->
+            <div id="tetris-game-area" style="width: 100%;">
+                
+                <div id="tetris-board-container" style="display: flex; flex-direction: column; align-items: center;">
+                    <div id="tetris-game-board">
+                        <!-- Les cellules seront générées par JS -->
+                    </div>
+                    <div class="tetris-controls-tip">
+                        **Contrôles clavier :** ← → ↑ ↓
+                    </div>
+                </div>
+
+                <div class="tetris-info">
+                    <div>Score : <span id="tetris-score">0</span></div>
+                    <div>Lignes : <span id="tetris-lines">0</span></div>
+                    
+                    <div>Prochain :
+                        <div id="tetris-next-piece"></div>
+                    </div>
+
+                    <div class="tetris-button-group">
+                        <button class="tetris-button" id="tetris-start">Démarrer / Pause</button>
+                        <button class="tetris-button" id="tetris-reset">Réinitialiser</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: ÉCOLE (Ancienne Interview) -->
+    <div class="slide-container" id="slide6">
+        <div class="content-wrapper">
+            <!-- NOUVELLE RUBRIQUE -->
+            <div class="newspaper-header animate-fade">RUBRIQUE : ÉCOLE</div>
+
+            <span class="section-tag tag-red animate-fade delay-1">EXCLUSIF</span>
+            <h2 class="article-title animate-slide delay-2">La Vie de l'Établissement : L'Interview</h2>
+
+            <div class="two-columns" style="grid-template-columns: 2fr 1fr; gap: 40px; margin-top: 20px;">
+                
+                <!-- Colonne image (order: 1) -->
+                <div class="image-wrapper animate-scale delay-4 column-2">
+                    <!-- Image Interview -->
+                    <div class="image-container" style="height: 300px;">
+                        <img src="https://placehold.co/500x300/c0392b/ffffff?text=INTERVIEW+CPE" alt="Deux personnes discutant pour une interview" onerror="this.onerror=null; this.src='https://placehold.co/500x300/c0392b/ffffff?text=INTERVIEW+CPE';">
+                        <div class="caption">Photo de la rencontre avec [Nom].</div>
+                    </div>
+
+                    <h3 class="sub-headline" style="color: #555; margin-top: 30px;">Flash Question : Le Conseil</h3>
+                    <div class="quiz-box" style="border-left: 5px solid #3498db; background-color: #f0f8ff;">
+                        <p style="font-size: 16px; margin-bottom: 5px; color: #3498db;">**Question :** Le meilleur conseil pour reussir le brevet ?</p>
+                        <p style="font-weight: bold; font-size: 18px;">[Reponse]</p>
+                    </div>
+                </div>
+                
+                <!-- Colonne principale : Interview longue (order: 2) -->
+                <div class="text-column column-1 animate-fade delay-3">
+                    <h3 class="sub-headline" style="color: #c0392b;">Face-a-Face avec [Nom et Role de la personne interviewee]</h3>
+                    <p>Pour mieux comprendre la vie de notre college, nous avons rencontre **[Nom de la personne]**, qui partage avec nous son experience et ses conseils. Remplissez cette section avec vos questions et les reponses obtenues.</p>
+
+                    <div class="interview-box">
+                        <strong>Journaliste :</strong> [Votre premiere question ici, ex : "Quel est le plus grand defi de votre metier ?"]
+                        <p style="font-style: italic;">**Reponse :** [Reponse de la personne interviewee]</p>
+                    </div>
+                    
+                    <div class="interview-box">
+                        <strong>Journaliste :</strong> [Votre deuxieme question ici, ex : "Un message pour les eleves de 2AC ?"]
+                        <p style="font-style: italic;">**Reponse :** [Reponse de la personne interviewee]</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: OUTILS IA -->
+    <div class="slide-container" id="slide7">
+        <div class="content-wrapper">
+            <div class="newspaper-header">OUTILS DE REDACTION</div>
+
+            <span class="section-tag tag-purple animate-fade delay-1">ATELIER IA</span>
+            <h2 class="article-title animate-slide delay-2">L'Assistant Gemini pour la 2AC</h2>
+            <p>Utilisez cet outil pour debloquer l'inspiration et generer du contenu pour les prochaines editions du journal.</p>
+
+            <!-- Message amical par defaut -->
+            <div id="ia-intro-message" class="animate-fade delay-3" style="color: #444; font-size: 18px; text-align: center; margin-bottom: 20px;">
+                Ceci est l'outil parfait pour trouver l'inspiration. Veuillez taper un mot-cle.
+            </div>
+
+            <!-- Generateur d'Idees -->
+            <div class="ia-section animate-fade delay-3">
+                <h3 class="sub-headline" style="color: #8e44ad;">✨ 1. Generateur de 3 Idees d'Articles</h3>
+                <p style="font-size: 16px;">Entrez un theme (ex: "La nouvelle bibliotheque", "Le sport au college") :</p>
+                <div class="ia-input-group">
+                    <input type="text" id="articleTopic" placeholder="Theme de l'article (max 5 mots)" maxlength="50">
+                    <button id="generateArticleButton" disabled>✨ Generer les Idees</button>
+                </div>
+                <div id="articleResults" class="ia-results">Les idees d'articles apparaitront ici.</div>
+            </div>
+
+            <!-- Maitre de Quiz -->
+            <div class="ia-section animate-fade delay-4" style="margin-top: 40px;">
+                <h3 class="sub-headline" style="color: #d35400;">✨ 2. Maitre de Quiz de la Recre</h3>
+                <p style="font-size: 16px;">Entrez un sujet pour creer une question de quiz avec 3 options et la bonne reponse (ex: "Le recyclage du papier", "La geographie du Maroc") :</p>
+                <div class="ia-input-group">
+                    <input type="text" id="quizTopic" placeholder="Sujet du quiz (max 5 mots)" maxlength="50">
+                    <button id="generateQuizButton" disabled>✨ Creer une Question</button>
+                </div>
+                <div id="quizResultsContainer" class="quiz-results-container">Les questions generees apparaitront ici.</div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div id="loadingIndicator" class="ia-loading" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 255, 255, 0.9); padding: 10px 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        Generation en cours... Veuillez patienter.
+    </div>
+    
+</body>
+<script type="module">
+    // Configuration de l'API Gemini
+    const MODEL = 'gemini-2.5-flash-preview-09-2025';
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=`;
+    const API_KEY = ""; 
+    
+    // --- Elements UI pour l'IA ---
+    const articleTopicInput = document.getElementById('articleTopic');
+    const generateArticleButton = document.getElementById('generateArticleButton');
+    const articleResultsDiv = document.getElementById('articleResults');
+    const quizTopicInput = document.getElementById('quizTopic');
+    const generateQuizButton = document.getElementById('generateQuizButton');
+    const quizResultsContainer = document.getElementById('quizResultsContainer');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+
+    // --- Elements UI pour le choix de vue et les boutons de bascule ---
+    const body = document.body;
+    const viewChoiceModal = document.getElementById('view-choice-modal');
+    const mobileChoiceButton = document.getElementById('mobile-choice');
+    const pcChoiceButton = document.getElementById('pc-choice');
+    const viewToggleContainer = document.getElementById('view-toggle-container');
+    const toggleToMobileButton = document.getElementById('toggle-to-mobile');
+    const toggleToPcButton = document.getElementById('toggle-to-pc');
+    
+    /**
+     * Met a jour l'etat des boutons de bascule PC/Mobile.
+     * @param {string} currentMode - 'mobile' ou 'pc'.
+     */
+    function updateToggleButtons(currentMode) {
+        viewToggleContainer.style.display = 'block';
+
+        if (currentMode === 'mobile') {
+            toggleToMobileButton.style.display = 'none';
+            toggleToPcButton.style.display = 'flex'; 
+        } else {
+            toggleToMobileButton.style.display = 'flex'; 
+            toggleToPcButton.style.display = 'none';
+        }
+    }
+
+
+    /**
+     * Gere la selection de la vue par l'utilisateur.
+     * @param {string} mode - 'mobile' ou 'pc'.
+     */
+    function setViewMode(mode) {
+        localStorage.setItem('viewMode', mode); 
+        
+        if (mode === 'mobile') {
+            body.classList.add('forced-mobile');
+        } else {
+            body.classList.remove('forced-mobile');
+        }
+        
+        viewChoiceModal.classList.remove('active');
+        viewChoiceModal.style.opacity = '0';
+        viewChoiceModal.style.pointerEvents = 'none';
+        
+        updateToggleButtons(mode);
+    }
+
+    /**
+     * Verifie la taille de l'ecran et affiche la modale de choix si necessaire.
+     */
+    function initializeViewChoice() {
+        const savedMode = localStorage.getItem('viewMode');
+        
+        viewToggleContainer.style.display = 'none';
+        
+        if (savedMode) {
+            setViewMode(savedMode);
+            viewChoiceModal.style.display = 'none'; 
+        } else {
+            viewChoiceModal.style.display = 'flex'; 
+            setTimeout(() => {
+                viewChoiceModal.classList.add('active');
+            }, 50);
+        }
+    }
+
+    // Evenements de la modale de choix
+    mobileChoiceButton.addEventListener('click', () => setViewMode('mobile'));
+    pcChoiceButton.addEventListener('click', () => setViewMode('pc'));
+    
+    // Evenements de bascule
+    toggleToMobileButton.addEventListener('click', () => setViewMode('mobile'));
+    toggleToPcButton.addEventListener('click', () => setViewMode('pc'));
+
+
+    // -------------------------------------------------------------------------
+    // LOGIQUE DE L'ASSISTANT IA
+    // -------------------------------------------------------------------------
+
+    /**
+     * Gere l'etat de tous les boutons et entrees pendant le chargement de l'API.
+     */
+    function setInteractiveElementsDisabled(isLoading) {
+        generateArticleButton.disabled = isLoading;
+        generateQuizButton.disabled = isLoading;
+        articleTopicInput.disabled = isLoading; 
+        quizTopicInput.disabled = isLoading; 
+
+        if (!isLoading) {
+            handleInputValidation(); 
+        }
+
+        loadingIndicator.style.display = isLoading ? 'block' : 'none';
+    }
+
+
+    /**
+     * Gere la validation en temps reel des champs de saisie pour activer/desactiver les boutons.
+     */
+    function handleInputValidation() {
+        generateArticleButton.disabled = articleTopicInput.value.trim().length === 0;
+        generateQuizButton.disabled = quizTopicInput.value.trim().length === 0;
+    }
+    
+    // Evenements pour la validation en temps reel
+    articleTopicInput.addEventListener('input', handleInputValidation);
+    quizTopicInput.addEventListener('input', handleInputValidation);
+
+
+    /**
+     * Effectue l'appel a l'API Gemini avec gestion des erreurs et de l'indicateur de chargement.
+     */
+    async function callGeminiApi(systemPrompt, userQuery, maxRetries = 3) {
+        setInteractiveElementsDisabled(true); 
+        const url = API_URL + API_KEY; 
+        
+        const payload = {
+            contents: [{ parts: [{ text: userQuery }] }],
+            systemInstruction: {
+                parts: [{ text: systemPrompt }]
+            },
+            tools: [{ "google_search": {} }],
+        };
+
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                const generatedText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (generatedText) {
+                    setInteractiveElementsDisabled(false); 
+                    return generatedText;
+                } else {
+                    throw new Error("La reponse de l'API est vide ou mal formatee.");
+                }
+
+            } catch (error) {
+                console.error("Erreur d'appel API (tentative %d):", i + 1, error.message);
+                if (i < maxRetries - 1) {
+                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+                } else {
+                    setInteractiveElementsDisabled(false); 
+                    return `Erreur critique après ${maxRetries} tentatives. Impossible de joindre l'IA.`;
+                }
+            }
+        }
+        setInteractiveElementsDisabled(false);
+        return null;
+    }
+
+    generateArticleButton.addEventListener('click', async () => {
+        const topic = articleTopicInput.value.trim();
+        if (!topic) {
+            articleResultsDiv.innerHTML = '<span style="color: #c0392b;">Veuillez entrer un theme d\'article.</span>';
+            return;
+        }
+        
+        articleResultsDiv.innerHTML = '<div class="ia-loading">L\'IA reflechit a de super idees...</div>';
+
+        const systemPrompt = "Vous etes un redacteur de journal scolaire de college (eleves de 12-15 ans). Votre objectif est de generer des titres d'articles accrocheurs et pertinents pour des eleves. Le ton doit etre enthousiaste et direct. Repondez uniquement avec une liste numerotee (sans introduction ni conclusion) des 3 idees d'articles.";
+        const userQuery = `Propose 3 idees d'articles de journal sur le theme : "${topic}".`;
+
+        const result = await callGeminiApi(systemPrompt, userQuery);
+
+        if (result && typeof result === 'string' && !result.includes('Erreur critique')) {
+            articleResultsDiv.innerHTML = result;
+        } else if (result) {
+            articleResultsDiv.innerHTML = `<span style="color: #c0392b;">${result}</span>`;
+        } else {
+             articleResultsDiv.innerHTML = `<span style="color: #c0392b;">Impossible de generer les idees. Veuillez verifier la console pour plus de details.</span>`;
+        }
+    });
+    
+
+    // --- 2. Maitre de Quiz de la Recre (Format Structure) ---
+
+    const quizSchema = {
+        type: "OBJECT",
+        properties: {
+            question: { "type": "STRING", description: "La question du quiz." },
+            options: { 
+                type: "ARRAY",
+                description: "Une liste de 3 options de reponse, dont une seule est correcte.",
+                items: { "type": "STRING" }
+            },
+            correctAnswer: { "type": "STRING", description: "Le texte exact de l'option correcte." }
+        },
+        required: ["question", "options", "correctAnswer"]
+    };
+
+    /**
+     * Effectue un appel a l'API Gemini pour generer une reponse structuree (JSON).
+     */
+    async function callGeminiApiStructured(systemPrompt, userQuery, maxRetries = 3) {
+        setInteractiveElementsDisabled(true); 
+        const url = API_URL + API_KEY;
+
+        const payload = {
+            contents: [{ parts: [{ text: userQuery }] }],
+            systemInstruction: {
+                parts: [{ text: systemPrompt }]
+            },
+            generationConfig: {
+                responseMimeType: "application/json",
+                responseSchema: quizSchema
+            },
+            tools: [{ "google_search": {} }],
+        };
+
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (jsonText) {
+                    try {
+                        const parsedData = JSON.parse(jsonText);
+                        setInteractiveElementsDisabled(false); 
+                        return parsedData;
+                    } catch (e) {
+                        console.error("Erreur de parsing JSON:", e);
+                        throw new Error("Reponse de l'IA mal formatee (non-JSON).");
+                    }
+                } else {
+                    throw new Error("La reponse de l'API est vide ou mal formatee.");
+                }
+
+            } catch (error) {
+                console.error("Erreur d'appel API structure (tentative %d):", i + 1, error.message);
+                if (i < maxRetries - 1) {
+                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+                } else {
+                    setInteractiveElementsDisabled(false); 
+                    return { error: `Erreur critique après ${maxRetries} tentatives. Impossible de joindre l'IA.` };
+                }
+            }
+        }
+        setInteractiveElementsDisabled(false);
+        return { error: "Echec de l'appel API." };
+    }
+    
+    // Fonction de rendu du quiz
+    function renderQuiz(quizData) {
+        const { question, options, correctAnswer } = quizData;
+        const html = `
+            <div class="generated-quiz-box animate-fade">
+                <div class="question">${question}</div>
+                <div style="margin-top: 10px;">
+                    ${options.map(option => `
+                        <p style="margin: 5px 0; padding: 5px 0; border-bottom: 1px dashed #e0cbe0; font-size: 16px;">
+                            ${option}
+                            ${option === correctAnswer ? '<i class="fa-solid fa-check" style="color: #27ae60; margin-left: 10px;"></i>' : ''}
+                        </p>
+                    `).join('')}
+                </div>
+                <div class="answer">
+                    <i class="fa-solid fa-lightbulb"></i> La bonne reponse est : ${correctAnswer}
+                </div>
+            </div>
+        `;
+        quizResultsContainer.insertAdjacentHTML('afterbegin', html);
+    }
+
+    generateQuizButton.addEventListener('click', async () => {
+        const topic = quizTopicInput.value.trim();
+        if (!topic) {
+            quizResultsContainer.innerHTML = '<span style="color: #c0392b;">Veuillez entrer un sujet de quiz.</span>';
+            return;
+        }
+
+        quizResultsContainer.innerHTML = '<div class="ia-loading">Le Maitre de Quiz est au travail...</div>';
+
+        const systemPrompt = "Vous etes un createur de quiz pour des eleves de college. Creez une seule question, amusante et educative, avec exactement 3 options de reponse, basee sur le sujet donne. La reponse DOIT etre un objet JSON valide conforme au schema fourni.";
+        const userQuery = `Creez une question de quiz sur le sujet : "${topic}".`;
+
+        const quizData = await callGeminiApiStructured(systemPrompt, userQuery);
+
+        quizResultsContainer.innerHTML = ''; 
+        
+        if (quizData && !quizData.error && quizData.question) {
+            renderQuiz(quizData);
+        } else if (quizData && quizData.error) {
+            quizResultsContainer.innerHTML = `<span style="color: #c0392b;">Erreur de l'IA : ${quizData.error}</span>`;
+        } else {
+            quizResultsContainer.innerHTML = '<span style="color: #c0392b;">Impossible de generer un quiz. Assurez-vous que le sujet est clair.</span>';
+        }
+    });
+
+    // -------------------------------------------------------------------------
+    // LOGIQUE DU JEU TETRIS
+    // -------------------------------------------------------------------------
+
+    const TETRIS_ROW_COUNT = 20;
+    const TETRIS_COL_COUNT = 10;
+    const TETROMINOS = [
+        { shape: [[1, 1, 1, 1]], color: 'I', size: 4 }, // I
+        { shape: [[1, 1], [1, 1]], color: 'O', size: 2 }, // O
+        { shape: [[0, 1, 0], [1, 1, 1]], color: 'T', size: 3 }, // T
+        { shape: [[1, 0, 0], [1, 1, 1]], color: 'J', size: 3 }, // J
+        { shape: [[0, 0, 1], [1, 1, 1]], color: 'L', size: 3 }, // L
+        { shape: [[0, 1, 1], [1, 1, 0]], color: 'S', size: 3 }, // S
+        { shape: [[1, 1, 0], [0, 1, 1]], color: 'Z', size: 3 }  // Z
+    ];
+
+    let board;
+    let currentPiece;
+    let nextPiece;
+    let score = 0;
+    let linesCleared = 0;
+    let gameInterval;
+    let isPaused = true;
+
+    const boardElement = document.getElementById('tetris-game-board');
+    const nextPieceElement = document.getElementById('tetris-next-piece');
+    const scoreElement = document.getElementById('tetris-score');
+    const linesElement = document.getElementById('tetris-lines');
+    const startButton = document.getElementById('tetris-start');
+    const resetButton = document.getElementById('tetris-reset');
+
+    /** Cree et ajoute les cellules HTML pour le plateau de jeu et la zone de prochaine piece */
+    function createGrid() {
+        for (let i = 0; i < TETRIS_ROW_COUNT * TETRIS_COL_COUNT; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('tetris-cell');
+            boardElement.appendChild(cell);
+        }
+        for (let i = 0; i < 16; i++) { // 4x4 pour la prochaine piece
+            const cell = document.createElement('div');
+            cell.classList.add('tetris-cell');
+            nextPieceElement.appendChild(cell);
+        }
+    }
+
+    /** Initialise le tableau de jeu interne avec des zeros (vide) */
+    function initializeBoard() {
+        board = Array(TETRIS_ROW_COUNT).fill(0).map(() => Array(TETRIS_COL_COUNT).fill(0));
+        score = 0;
+        linesCleared = 0;
+        scoreElement.textContent = score;
+        linesElement.textContent = linesCleared;
+    }
+
+    /** Tire une piece aleatoire du tableau TETROMINOS */
+    function getRandomPiece() {
+        const index = Math.floor(Math.random() * TETROMINOS.length);
+        const pieceData = TETROMINOS[index];
+        return {
+            shape: pieceData.shape,
+            color: pieceData.color,
+            size: pieceData.size,
+            x: Math.floor((TETRIS_COL_COUNT - pieceData.size) / 2),
+            y: 0 
+        };
+    }
+
+    /** Dessine la piece courante sur le tableau (mise a jour visuelle) */
+    function drawPiece() {
+        if (!currentPiece) return;
+        const { shape, color, x, y } = currentPiece;
+        for (let row = 0; row < shape.length; row++) {
+            for (let col = 0; col < shape[row].length; col++) {
+                if (shape[row][col]) {
+                    const boardRow = y + row;
+                    const boardCol = x + col;
+                    if (boardRow >= 0 && boardRow < TETRIS_ROW_COUNT && boardCol >= 0 && boardCol < TETRIS_COL_COUNT) {
+                        getCell(boardRow, boardCol).classList.add(`color-${color}`);
+                    }
+                }
+            }
+        }
+    }
+
+    /** Efface la piece courante du plateau (mise a jour visuelle) */
+    function erasePiece() {
+        if (!currentPiece) return;
+        const { shape, color, x, y } = currentPiece;
+        for (let row = 0; row < shape.length; row++) {
+            for (let col = 0; col < shape[row].length; col++) {
+                if (shape[row][col]) {
+                    const boardRow = y + row;
+                    const boardCol = x + col;
+                    if (boardRow >= 0 && boardRow < TETRIS_ROW_COUNT && boardCol >= 0 && boardCol < TETRIS_COL_COUNT) {
+                        getCell(boardRow, boardCol).classList.remove(`color-${color}`);
+                    }
+                }
+            }
+        }
+    }
+    
+    /** Recupere l'element DOM d'une cellule du plateau */
+    function getCell(row, col) {
+        return boardElement.children[row * TETRIS_COL_COUNT + col];
+    }
+
+    /** Met a jour le rendu visuel du plateau de jeu et des pieces fixes */
+    function updateBoardView() {
+        boardElement.querySelectorAll('.tetris-cell').forEach(cell => {
+            cell.className = 'tetris-cell color-empty'; 
+        });
+
+        for (let row = 0; row < TETRIS_ROW_COUNT; row++) {
+            for (let col = 0; col < TETRIS_COL_COUNT; col++) {
+                if (board[row][col] !== 0) {
+                    getCell(row, col).classList.add(`color-${board[row][col]}`);
+                }
+            }
+        }
+    }
+
+    /** Dessine la piece suivante dans sa zone de previsualisation */
+    function drawNextPiece() {
+        nextPieceElement.querySelectorAll('.tetris-cell').forEach(cell => {
+            cell.className = 'tetris-cell color-empty';
+        });
+
+        if (!nextPiece) return;
+        const { shape, color, size } = nextPiece;
+        // Centrage de la piece dans la grille 4x4
+        const startRow = Math.floor((4 - shape.length) / 2);
+        const startCol = Math.floor((4 - shape[0].length) / 2);
+
+        for (let row = 0; row < shape.length; row++) {
+            for (let col = 0; col < shape[row].length; col++) {
+                if (shape[row][col]) {
+                    const nextCellIndex = (startRow + row) * 4 + (startCol + col);
+                    nextPieceElement.children[nextCellIndex].classList.add(`color-${color}`);
+                }
+            }
+        }
+    }
+
+    /** Verifie si la piece peut etre placee a la position (x, y) */
+    function isValidMove(newX, newY, newShape) {
+        if (!newShape) newShape = currentPiece.shape;
+        
+        for (let row = 0; row < newShape.length; row++) {
+            for (let col = 0; col < newShape[row].length; col++) {
+                if (newShape[row][col]) {
+                    const boardRow = newY + row;
+                    const boardCol = newX + col;
+
+                    // Verification des limites horizontales
+                    if (boardCol < 0 || boardCol >= TETRIS_COL_COUNT) return false;
+
+                    // Verification des limites verticales (bas)
+                    if (boardRow >= TETRIS_ROW_COUNT) return false;
+
+                    // Verification des collisions avec les pieces existantes
+                    // Si boardRow est < 0, la piece est au-dessus du plateau (OK)
+                    if (boardRow >= 0 && board[boardRow][boardCol] !== 0) return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /** Fixe la piece courante au plateau */
+    function lockPiece() {
+        const { shape, color, x, y } = currentPiece;
+        for (let row = 0; row < shape.length; row++) {
+            for (let col = 0; col < shape[row].length; col++) {
+                if (shape[row][col]) {
+                    const boardRow = y + row;
+                    const boardCol = x + col;
+                    // Fixer la piece uniquement si elle est dans les limites du plateau
+                    if (boardRow >= 0) { 
+                        board[boardRow][boardCol] = color;
+                    }
+                }
+            }
+        }
+        currentPiece = null;
+        checkLines();
+        spawnPiece(); // Generer la prochaine piece
+    }
+    
+    /** Verifie les lignes completes et les supprime */
+    function checkLines() {
+        let linesRemoved = 0;
+        for (let row = TETRIS_ROW_COUNT - 1; row >= 0; row--) {
+            if (board[row].every(cell => cell !== 0)) {
+                // Ligne complete, la supprimer
+                board.splice(row, 1);
+                // Ajouter une nouvelle ligne vide en haut
+                board.unshift(Array(TETRIS_COL_COUNT).fill(0));
+                linesRemoved++;
+                // Le compteur de ligne (row) doit etre maintenu car la ligne du dessous est maintenant a cette position
+                row++; 
+            }
+        }
+
+        if (linesRemoved > 0) {
+            linesCleared += linesRemoved;
+            linesElement.textContent = linesCleared;
+            // Calcul du score simple (base sur le Tetris classique)
+            const scoreMultiplier = [0, 40, 100, 300, 1200];
+            score += scoreMultiplier[linesRemoved] * (1 + Math.floor(linesCleared / 10)); 
+            scoreElement.textContent = score;
+            updateBoardView();
+        }
+    }
+
+    /** Genere une nouvelle piece (utilise la piece 'nextPiece') */
+    function spawnPiece() {
+        if (!nextPiece) {
+            nextPiece = getRandomPiece();
+        }
+        currentPiece = nextPiece;
+        nextPiece = getRandomPiece();
+        drawNextPiece();
+
+        // Verifier si la piece spawn en collision -> Game Over
+        if (!isValidMove(currentPiece.x, currentPiece.y, currentPiece.shape)) {
+            gameOver();
+            return;
+        }
+        updateBoardView(); // Mise a jour initiale
+    }
+
+    /** Fait tomber la piece d'une unite */
+    function dropPiece() {
+        if (isPaused) return;
+
+        erasePiece();
+        if (isValidMove(currentPiece.x, currentPiece.y + 1)) {
+            currentPiece.y++;
+        } else {
+            lockPiece();
+        }
+        if (currentPiece) { // Si la piece n'a pas ete lockee
+             drawPiece();
+        }
+    }
+
+    /** Rotation de la piece (simple rotation matricielle) */
+    function rotatePiece(piece) {
+        const shape = piece.shape;
+        const size = shape.length;
+        // Creer une nouvelle matrice vide
+        const newShape = Array(size).fill(0).map(() => Array(size).fill(0));
+
+        // Transposition et inversion des colonnes
+        for (let row = 0; row < size; row++) {
+            for (let col = 0; col < size; col++) {
+                newShape[col][size - 1 - row] = shape[row][col];
+            }
+        }
+        return newShape;
+    }
+    
+    /** Boucle de jeu principale */
+    function gameLoop() {
+        if (isPaused) return;
+        
+        dropPiece();
+    }
+    
+    /** Ecran et logique de fin de partie */
+    function gameOver() {
+        clearInterval(gameInterval);
+        isPaused = true;
+        startButton.textContent = 'GAME OVER';
+        startButton.disabled = true;
+        // Affichage d'une alerte ou d'un message in-game
+        boardElement.style.border = '5px solid #c0392b';
+        setTimeout(() => {
+             // Remise a zero des controles visuels pour permettre un nouveau jeu
+            startButton.textContent = 'Démarrer / Pause';
+            startButton.disabled = false;
+        }, 3000);
+    }
+
+    /** Demarre ou met en pause le jeu */
+    function togglePause() {
+        if (startButton.textContent.includes('GAME OVER')) return;
+
+        isPaused = !isPaused;
+        if (isPaused) {
+            clearInterval(gameInterval);
+            startButton.textContent = 'Reprendre';
+        } else {
+            gameInterval = setInterval(gameLoop, 1000 - Math.min(Math.floor(linesCleared / 10) * 100, 800)); // Vitesse qui augmente
+            startButton.textContent = 'Pause';
+        }
+        boardElement.style.border = isPaused ? '5px solid #e67e22' : '5px solid #333';
+    }
+
+    /** Reinitialise le jeu */
+    function resetGame() {
+        clearInterval(gameInterval);
+        initializeBoard();
+        updateBoardView();
+        currentPiece = null;
+        nextPiece = null;
+        isPaused = true;
+        startButton.textContent = 'Démarrer';
+        startButton.disabled = false;
+        boardElement.style.border = '5px solid #333';
+
+        spawnPiece(); // Pour que la zone "Prochain" soit prete
+    }
+
+
+    // --- GESTION DES CONTROLES ET EVENEMENTS ---
+
+    function handleKeyDown(e) {
+        if (isPaused || !currentPiece) return;
+
+        let newX = currentPiece.x;
+        let newY = currentPiece.y;
+        let newShape = currentPiece.shape;
+
+        erasePiece();
+
+        switch (e.key) {
+            case 'ArrowLeft': // Gauche
+                newX--;
+                break;
+            case 'ArrowRight': // Droite
+                newX++;
+                break;
+            case 'ArrowDown': // Chute rapide d'une ligne
+                newY++;
+                break;
+            case 'ArrowUp': // Rotation
+                newShape = rotatePiece(currentPiece);
+                // Le deplacement avec la rotation doit etre gere par le "kick" ou "wall-kick"
+                // Pour simplifier, on permet la rotation si l'emplacement est valide
+                if (!isValidMove(newX, newY, newShape)) {
+                    // Tentative simple de wall-kick (decaler d'une case si bloque)
+                    if (isValidMove(newX + 1, newY, newShape)) newX++;
+                    else if (isValidMove(newX - 1, newY, newShape)) newX--;
+                    else newShape = currentPiece.shape; // Revenir a la forme initiale si bloque
+                }
+                break;
+            default:
+                break;
+        }
+
+        if (newShape !== currentPiece.shape) {
+            currentPiece.shape = newShape;
+        }
+
+        if (isValidMove(newX, newY, currentPiece.shape)) {
+            currentPiece.x = newX;
+            currentPiece.y = newY;
+            if (e.key === 'ArrowDown') {
+                 // Accelere la prochaine chute apres une chute manuelle
+                 clearInterval(gameInterval);
+                 gameInterval = setInterval(gameLoop, 1000 - Math.min(Math.floor(linesCleared / 10) * 100, 800));
+            }
+        } else if (e.key === 'ArrowDown') {
+            // Si le deplacement vers le bas est impossible, fixer la piece
+            lockPiece();
+        }
+
+        if(currentPiece) { // Dessiner si pas locke
+            drawPiece();
+        }
+    }
+
+
+    startButton.addEventListener('click', togglePause);
+    resetButton.addEventListener('click', resetGame);
+    document.addEventListener('keydown', handleKeyDown);
+
+
+    // --- INITIALISATION FINALE ---
+    
+    window.onload = () => {
+        handleInputValidation(); 
+        initializeViewChoice(); 
+
+        // Initialisation du Tetris
+        createGrid();
+        resetGame(); // Lance l'initialisation du plateau et tire la premiere piece
+    };
+
+</script>
