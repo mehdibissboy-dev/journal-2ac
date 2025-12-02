@@ -1,0 +1,3 @@
+# Security Policy
+
+NO COPIE NO REPUBLICATIONS..
